@@ -48,4 +48,5 @@ If the Grammar tab can't be loaded, vocabulary still works and Grammar mode show
 ## Notes
 
 - Students' "words to practice" lists are saved in their own browser (`localStorage`). Nothing is sent to a server.
+- The **A− / A+** buttons at the top change the size of the flashcard and quiz text (85% to 200%). Each device remembers its own choice.
 - Fonts (Noto Naskh Arabic, Figtree) load from Google Fonts.

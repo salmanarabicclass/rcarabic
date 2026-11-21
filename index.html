@@ -24,6 +24,7 @@
     --bad-soft: #F9E1DE;
     --hl: #FBE3A0;
     --hl-ink: #17202E;
+    --ts: 1;
     color-scheme: light;
     box-sizing: border-box;
     padding-top: env(safe-area-inset-top, 0px);
@@ -80,7 +81,11 @@
   }
   .wrap { max-width: 560px; margin: 0 auto; padding: 18px 16px 40px; }
   h1 { font-size: 22px; line-height: 1.2; margin: 0; font-weight: 700; }
-  .sub { color: var(--muted); margin: 2px 0 16px; font-size: 15px; }
+  .sub { color: var(--muted); margin: 2px 0 16px; font-size: 15px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; }
+  .textsize { display: inline-flex; align-items: center; gap: 2px; background: var(--seg); border-radius: 10px; padding: 3px; }
+  .textsize button { border: 0; background: var(--surface); color: var(--ink); font-weight: 700; min-width: 44px; min-height: 36px; border-radius: 8px; padding: 0 8px; }
+  .textsize button[disabled] { opacity: .4; cursor: default; }
+  .textsize output { min-width: 48px; text-align: center; font-size: 13px; font-weight: 600; color: var(--muted); }
   .ar { font-family: "Noto Naskh Arabic", "Geeza Pro", "Traditional Arabic", serif; direction: rtl; }
   button { font: inherit; color: inherit; cursor: pointer; }
   button:focus-visible, .card:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
@@ -117,26 +122,29 @@
   .counter { display: flex; justify-content: space-between; color: var(--muted); font-size: 15px; margin-bottom: 8px; }
 
   .card-wrap { perspective: 1200px; }
-  .card { position: relative; min-height: 310px; transform-style: preserve-3d; transition: transform .45s ease; cursor: pointer; border-radius: 20px; }
+  /* Both faces share one grid cell, so the card grows to fit the taller face. */
+  .card { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); min-height: calc(310px * max(1, var(--ts))); transform-style: preserve-3d; transition: transform .45s ease; cursor: pointer; border-radius: 20px; }
   .card.flipped { transform: rotateY(180deg); }
   .face {
-    position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    grid-area: 1 / 1; min-width: 0; overflow-wrap: anywhere; position: relative; backface-visibility: hidden; -webkit-backface-visibility: hidden;
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
     padding: 20px; text-align: center;
     background: var(--surface); border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 4px 0 var(--line);
   }
+  .face.front { padding-bottom: 44px; }
   .face.back { transform: rotateY(180deg); background: var(--accent-soft); border-color: var(--accent); box-shadow: 0 4px 0 var(--accent); }
-  .big.ar { font-size: clamp(54px, 17vw, 80px); line-height: 1.6; }
-  .small.ar { font-size: 30px; line-height: 1.6; color: var(--muted); }
-  .en { font-size: 22px; font-weight: 700; }
-  .en.big { font-size: 32px; line-height: 1.2; }
-  .tr { color: var(--muted); font-size: 20px; font-style: italic; }
+  /* The headline word is already the largest text, so it grows at most 1.5x. */
+  .big.ar { font-size: calc(clamp(54px, 17vw, 80px) * min(var(--ts), 1.5)); line-height: 1.6; }
+  .small.ar { font-size: calc(30px * var(--ts)); line-height: 1.6; color: var(--muted); }
+  .en { font-size: calc(22px * var(--ts)); font-weight: 700; }
+  .en.big { font-size: calc(32px * min(var(--ts), 1.5)); line-height: 1.2; }
+  .tr { color: var(--muted); font-size: calc(20px * var(--ts)); font-style: italic; }
   .hint { position: absolute; bottom: 14px; font-size: 14px; color: var(--muted); }
-  .sample { font-size: 16px; line-height: 1.5; color: var(--muted); max-width: 32ch; margin-top: 6px; }
-  .sample.ar { font-size: 22px; line-height: 1.8; max-width: none; }
+  .sample { font-size: calc(16px * var(--ts)); line-height: 1.5; color: var(--muted); max-width: 32ch; margin-top: 6px; }
+  .sample.ar { font-size: calc(22px * var(--ts)); line-height: 1.8; max-width: none; }
   .sample strong { color: var(--ink); font-weight: 700; }
   .sub a { color: var(--accent); font-weight: 600; }
-  .type { position: absolute; top: 10px; right: 16px; font-size: 18px; line-height: 1.6; color: var(--muted); }
+  .type { position: absolute; top: 10px; right: 16px; font-size: calc(18px * var(--ts)); line-height: 1.6; color: var(--muted); }
 
   .actions { display: flex; gap: 10px; margin-top: 18px; }
   .btn { border: 0; border-radius: 12px; padding: 14px 16px; font-weight: 700; min-height: 50px; flex: 1; }
@@ -154,9 +162,9 @@
   .opts { display: grid; gap: 10px; }
   .opt {
     display: flex; align-items: center; justify-content: space-between; gap: 10px; text-align: left;
-    background: var(--surface); border: 1.5px solid var(--line); border-radius: 14px; padding: 12px 16px; min-height: 56px; font-size: 18px; font-weight: 600;
+    background: var(--surface); border: 1.5px solid var(--line); border-radius: 14px; padding: 12px 16px; min-height: 56px; font-size: calc(18px * var(--ts)); font-weight: 600;
   }
-  .opt.ar { justify-content: space-between; font-size: 32px; font-weight: 400; direction: ltr; }
+  .opt.ar { justify-content: space-between; font-size: calc(32px * var(--ts)); font-weight: 400; direction: ltr; }
   .opt .label.ar { direction: rtl; line-height: 1.5; }
   .opt .mark { font-size: 14px; font-weight: 700; }
   .opt.correct { border-color: var(--good); background: var(--good-soft); }
@@ -164,33 +172,33 @@
   .opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
   .opt.wrong .mark { color: var(--bad); }
   .opt[disabled] { cursor: default; }
-  .feedback { margin-top: 14px; padding: 14px 16px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); }
+  .feedback { font-size: calc(16px * var(--ts)); margin-top: 14px; padding: 14px 16px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); }
   .feedback strong { display: block; margin-bottom: 4px; }
-  .feedback .ar { font-size: 28px; line-height: 1.5; }
+  .feedback .ar { font-size: calc(28px * var(--ts)); line-height: 1.5; }
 
   .score { font-size: 56px; font-weight: 700; line-height: 1.1; margin: 4px 0 4px; }
   .missed { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 8px; }
   .missed li { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid var(--line); padding-top: 8px; }
-  .missed .ar { font-size: 28px; line-height: 1.5; }
+  .missed .ar { font-size: calc(28px * var(--ts)); line-height: 1.5; }
   .missed .meaning { text-align: right; }
-  .missed .meaning span { display: block; color: var(--muted); font-style: italic; font-size: 15px; }
+  .missed .meaning span { display: block; color: var(--muted); font-style: italic; font-size: calc(15px * var(--ts)); }
 
   /* grammar cards */
-  .card.g { min-height: 380px; }
+  .card.g { min-height: calc(380px * max(1, var(--ts))); }
   .topic { position: absolute; top: 12px; left: 16px; right: 16px; font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; text-align: left; }
-  .gsent { font-size: clamp(30px, 9vw, 40px); line-height: 2; }
-  .gsent.small { font-size: 24px; line-height: 1.9; }
+  .gsent { font-size: calc(clamp(30px, 9vw, 40px) * var(--ts)); line-height: 2; }
+  .gsent.small { font-size: calc(24px * var(--ts)); line-height: 1.9; }
   .gsent strong, .gmissed strong { background: var(--hl); color: var(--hl-ink); border-radius: 4px; box-shadow: 0 0 0 3px var(--hl); font-weight: 700; }
-  .gtrans { color: var(--muted); font-size: 16px; }
-  .gq { font-weight: 700; font-size: 16px; max-width: 30ch; margin-top: 6px; }
-  .ans.ar { font-size: 34px; line-height: 1.6; }
-  .ans-en { font-size: 20px; font-weight: 700; }
-  .expl { font-size: 15px; color: var(--muted); max-width: 34ch; }
+  .gtrans { color: var(--muted); font-size: calc(16px * var(--ts)); }
+  .gq { font-weight: 700; font-size: calc(16px * var(--ts)); max-width: 30ch; margin-top: 6px; }
+  .ans.ar { font-size: calc(34px * var(--ts)); line-height: 1.6; }
+  .ans-en { font-size: calc(20px * var(--ts)); font-weight: 700; }
+  .expl { font-size: calc(15px * var(--ts)); color: var(--muted); max-width: 34ch; }
   .face.has-topic { padding-top: 40px; padding-bottom: 40px; }
   .opt .gopt { display: flex; flex-direction: column; align-items: flex-start; gap: 0; }
-  .opt .gopt .ar { font-size: 24px; font-weight: 400; line-height: 1.6; }
-  .opt .gopt .opt-en { font-size: 14px; font-weight: 600; color: var(--muted); }
-  .gmissed { font-size: 24px; line-height: 1.9; }
+  .opt .gopt .ar { font-size: calc(24px * var(--ts)); font-weight: 400; line-height: 1.6; }
+  .opt .gopt .opt-en { font-size: calc(14px * var(--ts)); font-weight: 600; color: var(--muted); }
+  .gmissed { font-size: calc(24px * var(--ts)); line-height: 1.9; }
 
   .foot { margin-top: 26px; color: var(--muted); font-size: 14px; }
 
@@ -200,7 +208,13 @@
 <body>
 <div class="wrap">
   <h1 id="pageTitle">Madinah Arabic Vocabulary</h1>
-  <p class="sub"><span id="pageSub">Book One class vocabulary</span> · <a id="bankLink" href="#" target="_blank" rel="noopener">Word bank ↗</a></p>
+  <p class="sub"><span><span id="pageSub">Book One class vocabulary</span> · <a id="bankLink" href="#" target="_blank" rel="noopener">Word bank ↗</a></span>
+    <span class="textsize" role="group" aria-label="Text size">
+      <button type="button" id="tsDown" aria-label="Smaller text">A−</button>
+      <output id="tsVal" aria-live="polite">100%</output>
+      <button type="button" id="tsUp" aria-label="Larger text">A+</button>
+    </span>
+  </p>
 
   <div class="seg" id="mode" role="group" aria-label="What to practice" hidden></div>
 
@@ -831,6 +845,23 @@
   function showMessage(title, body) {
     $("#main").innerHTML = '<div class="panel"><h2>' + title + '</h2><p class="muted">' + body + "</p></div>";
   }
+
+  // Text size for the study text, remembered on this device.
+  var TS_KEY = "madinah-text-size";
+  var TS_STEPS = [0.85, 1, 1.15, 1.3, 1.5, 1.75, 2];
+  var tsIndex = 1;
+  try { var savedTs = TS_STEPS.indexOf(parseFloat(localStorage.getItem(TS_KEY))); if (savedTs >= 0) tsIndex = savedTs; } catch (e) {}
+  function applyTextSize() {
+    var v = TS_STEPS[tsIndex];
+    document.documentElement.style.setProperty("--ts", String(v));
+    $("#tsVal").textContent = Math.round(v * 100) + "%";
+    $("#tsDown").disabled = tsIndex === 0;
+    $("#tsUp").disabled = tsIndex === TS_STEPS.length - 1;
+    try { localStorage.setItem(TS_KEY, String(v)); } catch (e) {}
+  }
+  $("#tsDown").addEventListener("click", function () { if (tsIndex > 0) { tsIndex--; applyTextSize(); } });
+  $("#tsUp").addEventListener("click", function () { if (tsIndex < TS_STEPS.length - 1) { tsIndex++; applyTextSize(); } });
+  applyTextSize();
 
   $("#bankLink").href = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/edit?usp=sharing";
   showMessage("Loading words…", "Getting the latest vocabulary list.");
